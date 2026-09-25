@@ -1,5 +1,6 @@
 package com.example.ui.screens
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,7 +25,6 @@ import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FilterAltOff
-import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
@@ -38,6 +38,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,7 +48,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -55,15 +55,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.model.Recipe
-import com.example.ui.theme.MintContainer
-import com.example.ui.theme.OnMintContainer
-import com.example.ui.theme.OnTerracottaContainer
-import com.example.ui.theme.PrimaryGreen
-import com.example.ui.theme.Terracotta
-import com.example.ui.theme.TerracottaContainer
-import com.example.ui.theme.TextPrimaryLight
-import com.example.ui.theme.TextSecondaryLight
-import com.example.ui.theme.UrgentRed
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -97,16 +88,22 @@ fun RecipeListScreen(
         OutlinedTextField(
             value = searchQuery,
             onValueChange = { searchQuery = it },
-            placeholder = { Text("Buscar receita por nome ou ingrediente...") },
+            placeholder = {
+                Text(
+                    "Buscar receita por nome ou ingrediente...",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Search,
                     contentDescription = "Buscar",
-                    tint = PrimaryGreen
+                    tint = MaterialTheme.colorScheme.primary
                 )
             },
             trailingIcon = {
-                if (searchQuery.isNotBlank()) {
+                if (searchQuery.isNotEmpty()) {
                     IconButton(
                         onClick = { searchQuery = "" },
                         modifier = Modifier.size(48.dp)
@@ -114,7 +111,7 @@ fun RecipeListScreen(
                         Icon(
                             imageVector = Icons.Default.Close,
                             contentDescription = "Limpar busca",
-                            tint = PrimaryGreen
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -122,28 +119,42 @@ fun RecipeListScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 8.dp)
-                .testTag("recipe_search_input"),
+                .testTag("input_search_recipe"),
+            singleLine = true,
             shape = RoundedCornerShape(14.dp),
-            singleLine = true
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                focusedContainerColor = MaterialTheme.colorScheme.surface,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurface
+            )
         )
 
-        // Prep Time Filters (High contrast chips)
+        // Filter chips horizontal scroll
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(horizontal = 16.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             item {
                 FilterChip(
                     selected = selectedMaxTime == null,
                     onClick = { onTimeFilterSelected(null) },
-                    label = { Text("Qualquer Tempo", fontWeight = if (selectedMaxTime == null) FontWeight.Bold else FontWeight.Medium) },
-                    modifier = Modifier.sizeIn(minHeight = 48.dp),
+                    label = { Text("Qualquer tempo", style = MaterialTheme.typography.labelMedium) },
+                    modifier = Modifier.sizeIn(minHeight = 44.dp),
                     colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = MintContainer,
-                        selectedLabelColor = OnMintContainer,
-                        containerColor = Color.White,
-                        labelColor = TextPrimaryLight
+                        selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        labelColor = MaterialTheme.colorScheme.onSurface
+                    ),
+                    border = FilterChipDefaults.filterChipBorder(
+                        enabled = true,
+                        selected = selectedMaxTime == null,
+                        borderColor = MaterialTheme.colorScheme.outlineVariant,
+                        selectedBorderColor = MaterialTheme.colorScheme.primary
                     )
                 )
             }
@@ -151,13 +162,19 @@ fun RecipeListScreen(
                 FilterChip(
                     selected = selectedMaxTime == 15,
                     onClick = { onTimeFilterSelected(if (selectedMaxTime == 15) null else 15) },
-                    label = { Text("Até 15 min ⚡", fontWeight = if (selectedMaxTime == 15) FontWeight.Bold else FontWeight.Medium) },
-                    modifier = Modifier.sizeIn(minHeight = 48.dp),
+                    label = { Text("≤ 15 min", style = MaterialTheme.typography.labelMedium) },
+                    modifier = Modifier.sizeIn(minHeight = 44.dp),
                     colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = MintContainer,
-                        selectedLabelColor = OnMintContainer,
-                        containerColor = Color.White,
-                        labelColor = TextPrimaryLight
+                        selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        labelColor = MaterialTheme.colorScheme.onSurface
+                    ),
+                    border = FilterChipDefaults.filterChipBorder(
+                        enabled = true,
+                        selected = selectedMaxTime == 15,
+                        borderColor = MaterialTheme.colorScheme.outlineVariant,
+                        selectedBorderColor = MaterialTheme.colorScheme.primary
                     )
                 )
             }
@@ -165,49 +182,39 @@ fun RecipeListScreen(
                 FilterChip(
                     selected = selectedMaxTime == 30,
                     onClick = { onTimeFilterSelected(if (selectedMaxTime == 30) null else 30) },
-                    label = { Text("Até 30 min", fontWeight = if (selectedMaxTime == 30) FontWeight.Bold else FontWeight.Medium) },
-                    modifier = Modifier.sizeIn(minHeight = 48.dp),
+                    label = { Text("≤ 30 min", style = MaterialTheme.typography.labelMedium) },
+                    modifier = Modifier.sizeIn(minHeight = 44.dp),
                     colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = MintContainer,
-                        selectedLabelColor = OnMintContainer,
-                        containerColor = Color.White,
-                        labelColor = TextPrimaryLight
+                        selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        labelColor = MaterialTheme.colorScheme.onSurface
+                    ),
+                    border = FilterChipDefaults.filterChipBorder(
+                        enabled = true,
+                        selected = selectedMaxTime == 30,
+                        borderColor = MaterialTheme.colorScheme.outlineVariant,
+                        selectedBorderColor = MaterialTheme.colorScheme.primary
                     )
                 )
             }
-            item {
-                FilterChip(
-                    selected = selectedMaxTime == 45,
-                    onClick = { onTimeFilterSelected(if (selectedMaxTime == 45) null else 45) },
-                    label = { Text("Até 45 min", fontWeight = if (selectedMaxTime == 45) FontWeight.Bold else FontWeight.Medium) },
-                    modifier = Modifier.sizeIn(minHeight = 48.dp),
-                    colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = MintContainer,
-                        selectedLabelColor = OnMintContainer,
-                        containerColor = Color.White,
-                        labelColor = TextPrimaryLight
-                    )
-                )
-            }
-        }
-
-        // Difficulty & Only Complete Filters
-        LazyRow(
-            modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
             item {
                 FilterChip(
                     selected = selectedDifficulty == "Todos",
                     onClick = { onDifficultySelected("Todos") },
-                    label = { Text("Todas as Dificuldades", fontWeight = if (selectedDifficulty == "Todos") FontWeight.Bold else FontWeight.Medium) },
-                    modifier = Modifier.sizeIn(minHeight = 48.dp),
+                    label = { Text("Todas as Dificuldades", style = MaterialTheme.typography.labelMedium) },
+                    modifier = Modifier.sizeIn(minHeight = 44.dp),
                     colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = MintContainer,
-                        selectedLabelColor = OnMintContainer,
-                        containerColor = Color.White,
-                        labelColor = TextPrimaryLight
+                        selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        labelColor = MaterialTheme.colorScheme.onSurface
+                    ),
+                    border = FilterChipDefaults.filterChipBorder(
+                        enabled = true,
+                        selected = selectedDifficulty == "Todos",
+                        borderColor = MaterialTheme.colorScheme.outlineVariant,
+                        selectedBorderColor = MaterialTheme.colorScheme.primary
                     )
                 )
             }
@@ -215,13 +222,19 @@ fun RecipeListScreen(
                 FilterChip(
                     selected = selectedDifficulty == "Fácil",
                     onClick = { onDifficultySelected(if (selectedDifficulty == "Fácil") "Todos" else "Fácil") },
-                    label = { Text("Fácil", fontWeight = if (selectedDifficulty == "Fácil") FontWeight.Bold else FontWeight.Medium) },
-                    modifier = Modifier.sizeIn(minHeight = 48.dp),
+                    label = { Text("Fácil", style = MaterialTheme.typography.labelMedium) },
+                    modifier = Modifier.sizeIn(minHeight = 44.dp),
                     colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = MintContainer,
-                        selectedLabelColor = OnMintContainer,
-                        containerColor = Color.White,
-                        labelColor = TextPrimaryLight
+                        selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        labelColor = MaterialTheme.colorScheme.onSurface
+                    ),
+                    border = FilterChipDefaults.filterChipBorder(
+                        enabled = true,
+                        selected = selectedDifficulty == "Fácil",
+                        borderColor = MaterialTheme.colorScheme.outlineVariant,
+                        selectedBorderColor = MaterialTheme.colorScheme.primary
                     )
                 )
             }
@@ -229,13 +242,19 @@ fun RecipeListScreen(
                 FilterChip(
                     selected = selectedDifficulty == "Médio",
                     onClick = { onDifficultySelected(if (selectedDifficulty == "Médio") "Todos" else "Médio") },
-                    label = { Text("Médio", fontWeight = if (selectedDifficulty == "Médio") FontWeight.Bold else FontWeight.Medium) },
-                    modifier = Modifier.sizeIn(minHeight = 48.dp),
+                    label = { Text("Médio", style = MaterialTheme.typography.labelMedium) },
+                    modifier = Modifier.sizeIn(minHeight = 44.dp),
                     colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = MintContainer,
-                        selectedLabelColor = OnMintContainer,
-                        containerColor = Color.White,
-                        labelColor = TextPrimaryLight
+                        selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        labelColor = MaterialTheme.colorScheme.onSurface
+                    ),
+                    border = FilterChipDefaults.filterChipBorder(
+                        enabled = true,
+                        selected = selectedDifficulty == "Médio",
+                        borderColor = MaterialTheme.colorScheme.outlineVariant,
+                        selectedBorderColor = MaterialTheme.colorScheme.primary
                     )
                 )
             }
@@ -243,40 +262,44 @@ fun RecipeListScreen(
                 FilterChip(
                     selected = onlyComplete,
                     onClick = { onOnlyCompleteToggle(!onlyComplete) },
-                    label = { Text("100% com o que tenho", fontWeight = if (onlyComplete) FontWeight.Bold else FontWeight.Medium) },
-                    modifier = Modifier.sizeIn(minHeight = 48.dp),
+                    label = { Text("100% com o que tenho", style = MaterialTheme.typography.labelMedium) },
+                    modifier = Modifier.sizeIn(minHeight = 44.dp),
                     colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = TerracottaContainer,
-                        selectedLabelColor = OnTerracottaContainer,
-                        containerColor = Color.White,
-                        labelColor = TextPrimaryLight
+                        selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        selectedLabelColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        labelColor = MaterialTheme.colorScheme.onSurface
+                    ),
+                    border = FilterChipDefaults.filterChipBorder(
+                        enabled = true,
+                        selected = onlyComplete,
+                        borderColor = MaterialTheme.colorScheme.outlineVariant,
+                        selectedBorderColor = MaterialTheme.colorScheme.secondary
                     )
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(4.dp))
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "${filteredList.size} receitas encontradas",
-                fontSize = 13.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = TextSecondaryLight
-            )
-
-            if (searchQuery.isNotBlank() || selectedMaxTime != null || selectedDifficulty != "Todos" || onlyComplete) {
+        // Active filter counter row
+        val isFiltered = selectedMaxTime != null || selectedDifficulty != "Todos" || onlyComplete || searchQuery.isNotBlank()
+        if (isFiltered) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 6.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "${filteredList.size} receita(s) encontrada(s)",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
                 Text(
                     text = "Limpar filtros",
-                    fontSize = 13.sp,
+                    style = MaterialTheme.typography.labelSmall,
                     fontWeight = FontWeight.Bold,
-                    color = Terracotta,
+                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
                         .clickable {
                             searchQuery = ""
@@ -289,7 +312,7 @@ fun RecipeListScreen(
             }
         }
 
-        // Empty state or recipe list (Rule 9: oriented next step)
+        // Empty state or recipe list
         if (filteredList.isEmpty()) {
             Box(
                 modifier = Modifier
@@ -303,14 +326,14 @@ fun RecipeListScreen(
                 ) {
                     Surface(
                         shape = RoundedCornerShape(20.dp),
-                        color = MintContainer,
+                        color = MaterialTheme.colorScheme.primaryContainer,
                         modifier = Modifier.size(72.dp)
                     ) {
                         Box(contentAlignment = Alignment.Center) {
                             Icon(
                                 imageVector = Icons.Default.FilterAltOff,
                                 contentDescription = null,
-                                tint = PrimaryGreen,
+                                tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(36.dp)
                             )
                         }
@@ -320,9 +343,8 @@ fun RecipeListScreen(
 
                     Text(
                         text = "Nenhuma receita encontrada",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = PrimaryGreen,
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
                         textAlign = TextAlign.Center
                     )
 
@@ -330,15 +352,14 @@ fun RecipeListScreen(
 
                     Text(
                         text = if (onlyComplete)
-                            "Você filtrou por '100% com o que tenho'. Desmarque este filtro para ver receitas que usam a maioria das suas sobras com poucos itens faltantes."
+                            "Você filtrou por '100% com o que tenho'. Desmarque este filtro para ver receitas que usam a maioria das suas sobras."
                         else if (searchQuery.isNotBlank())
-                            "Não encontramos receitas contendo \"$searchQuery\". Experimente pesquisar por ingredientes básicos como 'arroz', 'ovo' ou 'tomate'."
+                            "Não encontramos receitas contendo \"$searchQuery\". Experimente pesquisar por 'arroz', 'ovo' ou 'tomate'."
                         else
                             "Tente ajustar o tempo de preparo ou o nível de dificuldade selecionado.",
-                        fontSize = 14.sp,
-                        color = TextSecondaryLight,
-                        textAlign = TextAlign.Center,
-                        lineHeight = 20.sp
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center
                     )
 
                     Spacer(modifier = Modifier.height(20.dp))
@@ -351,20 +372,20 @@ fun RecipeListScreen(
                             onOnlyCompleteToggle(false)
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = PrimaryGreen,
-                            contentColor = Color.White
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
                         ),
-                        shape = RoundedCornerShape(12.dp),
+                        shape = RoundedCornerShape(14.dp),
                         modifier = Modifier.sizeIn(minHeight = 48.dp)
                     ) {
-                        Text("Ver Todas as Receitas", fontWeight = FontWeight.Bold)
+                        Text("Ver Todas as Receitas", style = MaterialTheme.typography.labelLarge)
                     }
                 }
             }
         } else {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(top = 8.dp, bottom = 96.dp)
+                contentPadding = PaddingValues(top = 4.dp, bottom = 96.dp)
             ) {
                 items(filteredList) { recipe ->
                     RecipeListItem(
@@ -392,7 +413,8 @@ fun RecipeListItem(
             .testTag("recipe_item_${recipe.id}"),
         shape = RoundedCornerShape(18.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
@@ -402,9 +424,8 @@ fun RecipeListItem(
             ) {
                 Text(
                     text = recipe.title,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 17.sp,
-                    color = PrimaryGreen,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.weight(1f)
                 )
 
@@ -415,22 +436,22 @@ fun RecipeListItem(
                     Icon(
                         imageVector = if (recipe.isFavorite) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
                         contentDescription = "Favoritar ${recipe.title}",
-                        tint = if (recipe.isFavorite) Terracotta else TextSecondaryLight
+                        tint = if (recipe.isFavorite) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
 
             Text(
                 text = recipe.description,
-                fontSize = 13.sp,
-                color = TextSecondaryLight,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            // Cost benefit & attributes (High Contrast AAA)
+            // Cost benefit & attributes
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -438,12 +459,12 @@ fun RecipeListItem(
             ) {
                 Surface(
                     shape = RoundedCornerShape(8.dp),
-                    color = MintContainer
+                    color = MaterialTheme.colorScheme.primaryContainer
                 ) {
                     Text(
                         text = "${recipe.wasteScore}% aproveitado",
-                        color = OnMintContainer,
-                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.ExtraBold,
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                     )
@@ -451,12 +472,12 @@ fun RecipeListItem(
 
                 Surface(
                     shape = RoundedCornerShape(8.dp),
-                    color = TerracottaContainer
+                    color = MaterialTheme.colorScheme.secondaryContainer
                 ) {
                     Text(
                         text = "Economia R$ ${String.format("%.2f", recipe.savingsEstimate)}",
-                        color = OnTerracottaContainer,
-                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer,
+                        style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                     )
@@ -469,30 +490,35 @@ fun RecipeListItem(
                         imageVector = Icons.Default.Schedule,
                         contentDescription = null,
                         modifier = Modifier.size(14.dp),
-                        tint = TextSecondaryLight
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "${recipe.prepTimeMinutes}m",
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = TextSecondaryLight
+                        text = "${recipe.prepTimeMinutes} min",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
 
             if (recipe.missingItems.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "Falta comprar: ${recipe.missingItems.joinToString(", ")}",
-                    fontSize = 12.sp,
-                    color = UrgentRed,
-                    fontWeight = FontWeight.SemiBold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                Spacer(modifier = Modifier.height(10.dp))
+                Surface(
+                    shape = RoundedCornerShape(8.dp),
+                    color = MaterialTheme.colorScheme.errorContainer,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.3f))
+                ) {
+                    Text(
+                        text = "Falta comprar: ${recipe.missingItems.joinToString(", ")}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onErrorContainer,
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                    )
+                }
             }
         }
     }
 }
-

@@ -11,46 +11,92 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
-private val DarkColorScheme = darkColorScheme(
-    primary = PrimaryDark,
-    onPrimary = BackgroundDark,
-    primaryContainer = PrimaryGreenLight,
-    onPrimaryContainer = MintContainer,
-    secondary = SecondaryDark,
-    onSecondary = BackgroundDark,
-    secondaryContainer = Color(0xFF6E3A24),
-    onSecondaryContainer = TerracottaContainer,
-    tertiary = SaffronGold,
-    background = BackgroundDark,
-    onBackground = TextPrimaryDark,
-    surface = SurfaceDark,
-    onSurface = TextPrimaryDark,
-    surfaceVariant = SurfaceVariantDark,
-    onSurfaceVariant = TextSecondaryDark
-)
+// =========================================================================
+// Material 3 Color Schemes - Fully WCAG AA Compliant
+// =========================================================================
 
-private val LightColorScheme = lightColorScheme(
+val LightColorScheme = lightColorScheme(
     primary = PrimaryGreen,
     onPrimary = Color.White,
     primaryContainer = MintContainer,
     onPrimaryContainer = OnMintContainer,
+
     secondary = Terracotta,
     onSecondary = Color.White,
     secondaryContainer = TerracottaContainer,
-    onSecondaryContainer = Color(0xFF5D1D09),
+    onSecondaryContainer = OnTerracottaContainer,
+
     tertiary = SaffronGold,
+    onTertiary = Color.White,
+    tertiaryContainer = SaffronContainer,
+    onTertiaryContainer = OnSaffronGold,
+
+    error = UrgentRed,
+    onError = Color.White,
+    errorContainer = UrgentBg,
+    onErrorContainer = OnUrgentBg,
+
     background = WarmBackgroundLight,
     onBackground = TextPrimaryLight,
+
     surface = CardSurfaceLight,
     onSurface = TextPrimaryLight,
     surfaceVariant = SurfaceVariantLight,
-    onSurfaceVariant = TextSecondaryLight
+    onSurfaceVariant = TextSecondaryLight,
+
+    outline = BorderMedium,
+    outlineVariant = BorderSubtle,
+
+    inverseSurface = TextPrimaryLight,
+    inverseOnSurface = WarmBackgroundLight,
+    inversePrimary = PrimaryDark,
+
+    surfaceTint = PrimaryGreen
+)
+
+val DarkColorScheme = darkColorScheme(
+    primary = PrimaryDark,
+    onPrimary = OnPrimaryDark,
+    primaryContainer = PrimaryContainerDark,
+    onPrimaryContainer = OnPrimaryContainerDark,
+
+    secondary = SecondaryDark,
+    onSecondary = OnSecondaryDark,
+    secondaryContainer = SecondaryContainerDark,
+    onSecondaryContainer = OnSecondaryContainerDark,
+
+    tertiary = TertiaryDark,
+    onTertiary = OnTertiaryDark,
+    tertiaryContainer = TertiaryContainerDark,
+    onTertiaryContainer = OnTertiaryContainerDark,
+
+    error = UrgentRedDark,
+    onError = OnUrgentDark,
+    errorContainer = UrgentBgDark,
+    onErrorContainer = OnUrgentBgDark,
+
+    background = BackgroundDark,
+    onBackground = TextPrimaryDark,
+
+    surface = SurfaceDark,
+    onSurface = TextPrimaryDark,
+    surfaceVariant = SurfaceVariantDark,
+    onSurfaceVariant = TextSecondaryDark,
+
+    outline = BorderMediumDark,
+    outlineVariant = BorderSubtleDark,
+
+    inverseSurface = TextPrimaryDark,
+    inverseOnSurface = BackgroundDark,
+    inversePrimary = PrimaryGreen,
+
+    surfaceTint = PrimaryDark
 )
 
 @Composable
 fun SobraChefTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = false, // Keep bespoke culinary branding consistent
+    dynamicColor: Boolean = false, // Keep bespoke culinary identity consistent & high contrast
     content: @Composable () -> Unit,
 ) {
     val colorScheme = when {

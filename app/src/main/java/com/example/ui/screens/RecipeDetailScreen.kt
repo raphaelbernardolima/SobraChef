@@ -2,10 +2,9 @@ package com.example.ui.screens
 
 import android.content.Context
 import android.content.Intent
-import android.provider.CalendarContract
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -31,13 +31,10 @@ import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Eco
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Paid
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Remove
-import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material3.AlertDialog
@@ -72,20 +69,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.model.MealType
 import com.example.data.model.Recipe
-import com.example.ui.theme.LeafGreen
-import com.example.ui.theme.MintContainer
-import com.example.ui.theme.OnMintContainer
-import com.example.ui.theme.OnTerracottaContainer
-import com.example.ui.theme.PrimaryGreen
-import com.example.ui.theme.PrimaryGreenLight
-import com.example.ui.theme.SaffronGold
-import com.example.ui.theme.Terracotta
-import com.example.ui.theme.TextPrimaryLight
-import com.example.ui.theme.TextSecondaryLight
-import com.example.ui.theme.UrgentRed
-import com.example.ui.theme.TerracottaContainer
-import com.example.ui.theme.UrgentBg
-import com.example.ui.theme.UrgentRed
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -108,7 +91,8 @@ fun RecipeDetailScreen(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .testTag("recipe_detail_screen")
+            .testTag("recipe_detail_screen"),
+        contentPadding = PaddingValues(bottom = 96.dp)
     ) {
         // --- 1. Top Navigation & Action Bar ---
         item {
@@ -121,12 +105,14 @@ fun RecipeDetailScreen(
             ) {
                 IconButton(
                     onClick = onBack,
-                    modifier = Modifier.testTag("btn_back_recipe_detail")
+                    modifier = Modifier
+                        .size(48.dp)
+                        .testTag("btn_back_recipe_detail")
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Voltar",
-                        tint = PrimaryGreen
+                        tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
 
@@ -137,7 +123,11 @@ fun RecipeDetailScreen(
                             .size(48.dp)
                             .testTag("btn_share_recipe")
                     ) {
-                        Icon(imageVector = Icons.Default.Share, contentDescription = "Compartilhar", tint = PrimaryGreen)
+                        Icon(
+                            imageVector = Icons.Default.Share,
+                            contentDescription = "Compartilhar",
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
                     }
 
                     IconButton(
@@ -149,7 +139,7 @@ fun RecipeDetailScreen(
                         Icon(
                             imageVector = if (isFavorite) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
                             contentDescription = if (isFavorite) "Remover dos favoritos" else "Adicionar aos favoritos",
-                            tint = if (isFavorite) Terracotta else PrimaryGreen
+                            tint = if (isFavorite) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -161,33 +151,32 @@ fun RecipeDetailScreen(
             Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                 Text(
                     text = recipe.title,
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = PrimaryGreen,
-                    lineHeight = 30.sp
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(6.dp))
 
                 Text(
                     text = recipe.description,
-                    fontSize = 14.sp,
-                    color = TextSecondaryLight,
-                    lineHeight = 20.sp
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
                 Spacer(modifier = Modifier.height(14.dp))
             }
         }
 
-        // --- 3. Custo-Benefício & Waste Metrics Card (AAA Contrast) ---
+        // --- 3. Custo-Benefício & Waste Metrics Card ---
         item {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
                 shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = MintContainer)
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Row(
@@ -196,24 +185,27 @@ fun RecipeDetailScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(imageVector = Icons.Default.Paid, contentDescription = null, tint = PrimaryGreen)
+                            Icon(
+                                imageVector = Icons.Default.Paid,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary
+                            )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = "Análise Custo-Benefício",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 15.sp,
-                                color = PrimaryGreen
+                                text = "Impacto Econômico",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
 
                         Surface(
                             shape = RoundedCornerShape(10.dp),
-                            color = PrimaryGreen
+                            color = MaterialTheme.colorScheme.primaryContainer
                         ) {
                             Text(
                                 text = "${recipe.wasteScore}% Zero Desperdício",
-                                color = Color.White,
-                                fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.ExtraBold,
                                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
                             )
@@ -227,32 +219,32 @@ fun RecipeDetailScreen(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Column {
-                            Text("Economia Gerada", fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = OnMintContainer)
+                            Text("Economia Gerada", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             Text(
                                 "R$ ${String.format("%.2f", recipe.savingsEstimate)}",
-                                fontSize = 19.sp,
+                                style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.ExtraBold,
-                                color = Terracotta
+                                color = MaterialTheme.colorScheme.secondary
                             )
                         }
 
                         Column {
-                            Text("Custo por Pessoa", fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = OnMintContainer)
+                            Text("Custo por Pessoa", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             Text(
                                 "R$ ${String.format("%.2f", recipe.costPerServing)}",
-                                fontSize = 19.sp,
+                                style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.ExtraBold,
-                                color = PrimaryGreen
+                                color = MaterialTheme.colorScheme.primary
                             )
                         }
 
                         Column {
-                            Text("Tempo Total", fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = OnMintContainer)
+                            Text("Tempo Total", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             Text(
                                 "${recipe.prepTimeMinutes} min",
-                                fontSize = 19.sp,
+                                style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.ExtraBold,
-                                color = PrimaryGreen
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }
@@ -260,15 +252,16 @@ fun RecipeDetailScreen(
             }
         }
 
-        // --- 4. Interactive Servings Adjuster ("Ajuste de Porções" with 48dp touch targets) ---
+        // --- 4. Interactive Servings Adjuster ---
         item {
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
                 shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
             ) {
                 Row(
                     modifier = Modifier
@@ -284,20 +277,19 @@ fun RecipeDetailScreen(
                         Icon(
                             imageVector = Icons.Default.People,
                             contentDescription = null,
-                            tint = PrimaryGreen
+                            tint = MaterialTheme.colorScheme.primary
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Column {
                             Text(
                                 text = "Porções na Refeição",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 14.sp,
-                                color = PrimaryGreen
+                                style = MaterialTheme.typography.titleSmall,
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
                                 text = "Ingredientes ajustados automaticamente",
-                                fontSize = 12.sp,
-                                color = TextSecondaryLight
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
@@ -311,22 +303,22 @@ fun RecipeDetailScreen(
                             enabled = currentServings > 1,
                             modifier = Modifier
                                 .size(48.dp)
-                                .background(Color.White, CircleShape)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.surfaceVariant)
                                 .testTag("btn_decrease_servings")
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Remove,
                                 contentDescription = "Diminuir porções",
-                                tint = if (currentServings > 1) PrimaryGreen else Color.Gray
+                                tint = if (currentServings > 1) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
                             )
                         }
 
                         Text(
                             text = "$currentServings ${if (currentServings == 1) "pessoa" else "pessoas"}",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp,
-                            color = PrimaryGreen,
-                            modifier = Modifier.padding(horizontal = 4.dp)
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.padding(horizontal = 6.dp)
                         )
 
                         IconButton(
@@ -334,13 +326,14 @@ fun RecipeDetailScreen(
                             enabled = currentServings < 12,
                             modifier = Modifier
                                 .size(48.dp)
-                                .background(Color.White, CircleShape)
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.surfaceVariant)
                                 .testTag("btn_increase_servings")
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Add,
                                 contentDescription = "Aumentar porções",
-                                tint = if (currentServings < 12) PrimaryGreen else Color.Gray
+                                tint = if (currentServings < 12) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
                             )
                         }
                     }
@@ -360,22 +353,22 @@ fun RecipeDetailScreen(
             ) {
                 Text(
                     text = "Ingredientes Necessários",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    color = PrimaryGreen
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
                 if (recipe.missingItems.isNotEmpty()) {
                     Surface(
                         shape = RoundedCornerShape(8.dp),
-                        color = UrgentBg
+                        color = MaterialTheme.colorScheme.errorContainer,
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.3f))
                     ) {
                         Text(
                             text = "${recipe.missingItems.size} faltantes",
-                            color = UrgentRed,
-                            fontSize = 11.sp,
+                            color = MaterialTheme.colorScheme.onErrorContainer,
+                            style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp)
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                         )
                     }
                 }
@@ -387,19 +380,19 @@ fun RecipeDetailScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 5.dp),
+                    .padding(horizontal = 16.dp, vertical = 6.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Surface(
                     shape = CircleShape,
-                    color = if (ing.isAvailable) MintContainer else UrgentBg,
-                    modifier = Modifier.size(20.dp)
+                    color = if (ing.isAvailable) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.errorContainer,
+                    modifier = Modifier.size(22.dp)
                 ) {
                     Icon(
                         imageVector = if (ing.isAvailable) Icons.Default.Check else Icons.Default.WarningAmber,
                         contentDescription = null,
-                        tint = if (ing.isAvailable) PrimaryGreen else UrgentRed,
-                        modifier = Modifier.padding(3.dp)
+                        tint = if (ing.isAvailable) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(4.dp)
                     )
                 }
 
@@ -407,8 +400,8 @@ fun RecipeDetailScreen(
 
                 Text(
                     text = "${if (ing.amount % 1.0 == 0.0) ing.amount.toInt().toString() else ing.amount.toString()} ${ing.unit} de ${ing.name}",
-                    fontSize = 14.sp,
-                    color = if (ing.isAvailable) MaterialTheme.colorScheme.onSurface else UrgentRed,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (ing.isAvailable) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onErrorContainer,
                     fontWeight = if (ing.isAvailable) FontWeight.Medium else FontWeight.SemiBold,
                     modifier = Modifier.weight(1f)
                 )
@@ -416,8 +409,8 @@ fun RecipeDetailScreen(
                 if (!ing.isAvailable) {
                     Text(
                         text = "Falta comprar",
-                        fontSize = 11.sp,
-                        color = UrgentRed,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.error,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -435,11 +428,12 @@ fun RecipeDetailScreen(
                         .padding(horizontal = 16.dp)
                         .testTag("btn_add_missing_to_shopping"),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Terracotta,
-                        contentColor = Color.White
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary
                     ),
                     shape = RoundedCornerShape(14.dp),
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 14.dp)
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 14.dp),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.AddShoppingCart,
@@ -449,8 +443,7 @@ fun RecipeDetailScreen(
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         "Adicionar ${recipe.missingItems.size} faltantes à Lista de Compras",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp
+                        style = MaterialTheme.typography.labelLarge
                     )
                 }
             }
@@ -458,12 +451,11 @@ fun RecipeDetailScreen(
 
         // --- 7. Instructions / Step by step ---
         item {
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(26.dp))
             Text(
                 text = "Modo de Preparo Passo a Passo",
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp,
-                color = PrimaryGreen,
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
             Spacer(modifier = Modifier.height(10.dp))
@@ -475,11 +467,11 @@ fun RecipeDetailScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 6.dp)
-                    .clip(RoundedCornerShape(12.dp))
+                .clip(RoundedCornerShape(14.dp))
                     .clickable {
                         if (isChecked) checkedInstructions.remove(index) else checkedInstructions.add(index)
                     }
-                    .background(if (isChecked) MintContainer.copy(alpha = 0.5f) else MaterialTheme.colorScheme.surface)
+                    .background(if (isChecked) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f) else MaterialTheme.colorScheme.surface)
                     .padding(12.dp),
                 verticalAlignment = Alignment.Top
             ) {
@@ -489,8 +481,8 @@ fun RecipeDetailScreen(
                         if (checked) checkedInstructions.add(index) else checkedInstructions.remove(index)
                     },
                     colors = CheckboxDefaults.colors(
-                        checkedColor = PrimaryGreen,
-                        checkmarkColor = Color.White
+                        checkedColor = MaterialTheme.colorScheme.primary,
+                        checkmarkColor = MaterialTheme.colorScheme.onPrimary
                     )
                 )
 
@@ -499,16 +491,15 @@ fun RecipeDetailScreen(
                 Column {
                     Text(
                         text = "Passo ${index + 1}",
-                        fontSize = 13.sp,
+                        style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
-                        color = PrimaryGreen
+                        color = if (isChecked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         text = step,
-                        fontSize = 14.sp,
+                        style = MaterialTheme.typography.bodyMedium,
                         textDecoration = if (isChecked) TextDecoration.LineThrough else TextDecoration.None,
-                        color = if (isChecked) TextSecondaryLight else TextPrimaryLight,
-                        lineHeight = 20.sp
+                        color = if (isChecked) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
@@ -522,7 +513,8 @@ fun RecipeDetailScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
                 shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f))
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.tertiary.copy(alpha = 0.3f))
             ) {
                 Row(
                     modifier = Modifier.padding(14.dp),
@@ -531,23 +523,21 @@ fun RecipeDetailScreen(
                     Icon(
                         imageVector = Icons.Default.Lightbulb,
                         contentDescription = null,
-                        tint = SaffronGold,
+                        tint = MaterialTheme.colorScheme.tertiary,
                         modifier = Modifier.size(24.dp)
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Column {
                         Text(
                             text = "Segredo SobraChef",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp,
-                            color = PrimaryGreen
+                            style = MaterialTheme.typography.titleSmall,
+                            color = MaterialTheme.colorScheme.onTertiaryContainer
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
                             text = recipe.tips,
-                            fontSize = 13.sp,
-                            color = TextSecondaryLight,
-                            lineHeight = 18.sp
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.9f)
                         )
                     }
                 }
@@ -564,13 +554,21 @@ fun RecipeDetailScreen(
                     .padding(horizontal = 16.dp)
                     .testTag("btn_schedule_meal"),
                 shape = RoundedCornerShape(14.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 14.dp)
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 14.dp),
+                border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.primary)
             ) {
-                Icon(imageVector = Icons.Default.CalendarMonth, contentDescription = null, tint = PrimaryGreen)
+                Icon(
+                    imageVector = Icons.Default.CalendarMonth,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Agendar no Cardápio Semanal", color = PrimaryGreen, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                Text(
+                    "Agendar no Cardápio Semanal",
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.labelLarge
+                )
             }
-            Spacer(modifier = Modifier.height(96.dp))
         }
     }
 
@@ -581,11 +579,19 @@ fun RecipeDetailScreen(
         AlertDialog(
             onDismissRequest = { showScheduleDialog = false },
             title = {
-                Text("Agendar ${recipe.title}", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = PrimaryGreen)
+                Text(
+                    "Agendar ${recipe.title}",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
             },
             text = {
                 Column {
-                    Text("Escolha o dia da refeição:", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = TextSecondaryLight)
+                    Text(
+                        "Escolha o dia da refeição:",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -595,16 +601,16 @@ fun RecipeDetailScreen(
                             val isSelected = selectedDay == day
                             Surface(
                                 shape = RoundedCornerShape(10.dp),
-                                color = if (isSelected) MintContainer else MaterialTheme.colorScheme.surfaceVariant,
+                                color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
+                                border = if (isSelected) BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(10.dp))
                                     .clickable { selectedDay = day }
                             ) {
                                 Text(
                                     text = day,
-                                    fontSize = 13.sp,
-                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                                    color = if (isSelected) OnMintContainer else TextPrimaryLight,
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface,
                                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp)
                                 )
                             }
@@ -613,7 +619,11 @@ fun RecipeDetailScreen(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    Text("Escolha o tipo:", fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = TextSecondaryLight)
+                    Text(
+                        "Escolha o tipo:",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -623,16 +633,16 @@ fun RecipeDetailScreen(
                             val isSelected = selectedMeal == meal
                             Surface(
                                 shape = RoundedCornerShape(10.dp),
-                                color = if (isSelected) TerracottaContainer else MaterialTheme.colorScheme.surfaceVariant,
+                                color = if (isSelected) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceVariant,
+                                border = if (isSelected) BorderStroke(1.dp, MaterialTheme.colorScheme.secondary) else BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(10.dp))
                                     .clickable { selectedMeal = meal }
                             ) {
                                 Text(
                                     text = meal.displayName,
-                                    fontSize = 12.sp,
-                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                                    color = if (isSelected) OnTerracottaContainer else TextPrimaryLight,
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = if (isSelected) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurface,
                                     modifier = Modifier.padding(horizontal = 10.dp, vertical = 10.dp)
                                 )
                             }
@@ -646,15 +656,23 @@ fun RecipeDetailScreen(
                         onScheduleMealPlan(recipe.title, selectedDay, selectedMeal)
                         showScheduleDialog = false
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    ),
+                    shape = RoundedCornerShape(12.dp),
                     modifier = Modifier.testTag("btn_confirm_schedule_dialog")
                 ) {
-                    Text("Salvar no Cardápio", fontWeight = FontWeight.Bold)
+                    Text("Salvar no Cardápio", style = MaterialTheme.typography.labelLarge)
                 }
             },
             dismissButton = {
-                OutlinedButton(onClick = { showScheduleDialog = false }) {
-                    Text("Cancelar")
+                OutlinedButton(
+                    onClick = { showScheduleDialog = false },
+                    shape = RoundedCornerShape(12.dp),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                ) {
+                    Text("Cancelar", color = MaterialTheme.colorScheme.onSurface)
                 }
             }
         )

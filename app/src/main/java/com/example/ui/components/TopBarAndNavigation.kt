@@ -14,6 +14,7 @@ import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -22,16 +23,12 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.ui.theme.MintContainer
-import com.example.ui.theme.OnMintContainer
-import com.example.ui.theme.PrimaryGreen
-import com.example.ui.theme.PrimaryGreenLight
-import com.example.ui.theme.Terracotta
-import com.example.ui.theme.TextSecondaryLight
 import com.example.ui.viewmodel.AppScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,23 +38,33 @@ fun SobraChefTopAppBar(
     navigationIcon: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {}
 ) {
+    val borderColor = MaterialTheme.colorScheme.outlineVariant
     TopAppBar(
         title = {
             Text(
                 text = title,
+                style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.ExtraBold,
-                fontSize = 20.sp,
-                color = PrimaryGreen
+                color = MaterialTheme.colorScheme.onSurface
             )
         },
         navigationIcon = navigationIcon,
         actions = actions,
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MintContainer,
-            titleContentColor = PrimaryGreen,
-            navigationIconContentColor = PrimaryGreen,
-            actionIconContentColor = PrimaryGreen
-        )
+            containerColor = MaterialTheme.colorScheme.surface,
+            titleContentColor = MaterialTheme.colorScheme.onSurface,
+            navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
+            actionIconContentColor = MaterialTheme.colorScheme.onSurface
+        ),
+        modifier = Modifier.drawBehind {
+            // Subtle crisp hairline bottom border
+            drawLine(
+                color = borderColor,
+                start = Offset(0f, size.height),
+                end = Offset(size.width, size.height),
+                strokeWidth = 1.dp.toPx()
+            )
+        }
     )
 }
 
@@ -68,9 +75,20 @@ fun SobraChefBottomNav(
     shoppingCount: Int = 0,
     savedCount: Int = 0
 ) {
+    val borderColor = MaterialTheme.colorScheme.outlineVariant
     NavigationBar(
-        containerColor = MintContainer,
-        contentColor = PrimaryGreen
+        containerColor = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.onSurface,
+        tonalElevation = 0.dp,
+        modifier = Modifier.drawBehind {
+            // Subtle crisp hairline top border
+            drawLine(
+                color = borderColor,
+                start = Offset(0f, 0f),
+                end = Offset(size.width, 0f),
+                strokeWidth = 1.dp.toPx()
+            )
+        }
     ) {
         NavigationBarItem(
             selected = currentScreen == AppScreen.HOME,
@@ -84,16 +102,17 @@ fun SobraChefBottomNav(
             label = {
                 Text(
                     text = "Despensa",
-                    fontWeight = if (currentScreen == AppScreen.HOME) FontWeight.Bold else FontWeight.Medium
+                    fontWeight = if (currentScreen == AppScreen.HOME) FontWeight.Bold else FontWeight.Medium,
+                    fontSize = 12.sp
                 )
             },
             modifier = Modifier.testTag("nav_home"),
             colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = PrimaryGreen,
-                unselectedIconColor = TextSecondaryLight,
-                selectedTextColor = PrimaryGreen,
-                unselectedTextColor = TextSecondaryLight,
-                indicatorColor = PrimaryGreenLight.copy(alpha = 0.2f)
+                selectedIconColor = MaterialTheme.colorScheme.primary,
+                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                selectedTextColor = MaterialTheme.colorScheme.primary,
+                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                indicatorColor = MaterialTheme.colorScheme.primaryContainer
             )
         )
 
@@ -109,16 +128,17 @@ fun SobraChefBottomNav(
             label = {
                 Text(
                     text = "Receitas",
-                    fontWeight = if (currentScreen == AppScreen.RECIPES) FontWeight.Bold else FontWeight.Medium
+                    fontWeight = if (currentScreen == AppScreen.RECIPES) FontWeight.Bold else FontWeight.Medium,
+                    fontSize = 12.sp
                 )
             },
             modifier = Modifier.testTag("nav_recipes"),
             colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = PrimaryGreen,
-                unselectedIconColor = TextSecondaryLight,
-                selectedTextColor = PrimaryGreen,
-                unselectedTextColor = TextSecondaryLight,
-                indicatorColor = PrimaryGreenLight.copy(alpha = 0.2f)
+                selectedIconColor = MaterialTheme.colorScheme.primary,
+                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                selectedTextColor = MaterialTheme.colorScheme.primary,
+                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                indicatorColor = MaterialTheme.colorScheme.primaryContainer
             )
         )
 
@@ -134,16 +154,17 @@ fun SobraChefBottomNav(
             label = {
                 Text(
                     text = "Cardápio",
-                    fontWeight = if (currentScreen == AppScreen.MEAL_PLAN) FontWeight.Bold else FontWeight.Medium
+                    fontWeight = if (currentScreen == AppScreen.MEAL_PLAN) FontWeight.Bold else FontWeight.Medium,
+                    fontSize = 12.sp
                 )
             },
             modifier = Modifier.testTag("nav_meal_plan"),
             colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = PrimaryGreen,
-                unselectedIconColor = TextSecondaryLight,
-                selectedTextColor = PrimaryGreen,
-                unselectedTextColor = TextSecondaryLight,
-                indicatorColor = PrimaryGreenLight.copy(alpha = 0.2f)
+                selectedIconColor = MaterialTheme.colorScheme.primary,
+                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                selectedTextColor = MaterialTheme.colorScheme.primary,
+                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                indicatorColor = MaterialTheme.colorScheme.primaryContainer
             )
         )
 
@@ -155,8 +176,8 @@ fun SobraChefBottomNav(
                     BadgedBox(
                         badge = {
                             Badge(
-                                containerColor = Terracotta,
-                                contentColor = Color.White
+                                containerColor = MaterialTheme.colorScheme.secondary,
+                                contentColor = MaterialTheme.colorScheme.onSecondary
                             ) {
                                 Text(shoppingCount.toString(), fontWeight = FontWeight.Bold)
                             }
@@ -177,16 +198,17 @@ fun SobraChefBottomNav(
             label = {
                 Text(
                     text = "Compras",
-                    fontWeight = if (currentScreen == AppScreen.SHOPPING) FontWeight.Bold else FontWeight.Medium
+                    fontWeight = if (currentScreen == AppScreen.SHOPPING) FontWeight.Bold else FontWeight.Medium,
+                    fontSize = 12.sp
                 )
             },
             modifier = Modifier.testTag("nav_shopping"),
             colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = PrimaryGreen,
-                unselectedIconColor = TextSecondaryLight,
-                selectedTextColor = PrimaryGreen,
-                unselectedTextColor = TextSecondaryLight,
-                indicatorColor = PrimaryGreenLight.copy(alpha = 0.2f)
+                selectedIconColor = MaterialTheme.colorScheme.primary,
+                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                selectedTextColor = MaterialTheme.colorScheme.primary,
+                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                indicatorColor = MaterialTheme.colorScheme.primaryContainer
             )
         )
     }

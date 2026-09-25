@@ -2,7 +2,7 @@ package com.example.ui.screens
 
 import android.content.Context
 import android.content.Intent
-import androidx.compose.foundation.background
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,6 +36,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,7 +46,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
@@ -54,14 +54,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.model.ShoppingItem
-import com.example.ui.theme.MintContainer
-import com.example.ui.theme.OnMintContainer
-import com.example.ui.theme.PrimaryGreen
-import com.example.ui.theme.Terracotta
-import com.example.ui.theme.TerracottaContainer
-import com.example.ui.theme.TextPrimaryLight
-import com.example.ui.theme.TextSecondaryLight
-import com.example.ui.theme.UrgentRed
 
 @Composable
 fun ShoppingListScreen(
@@ -95,16 +87,14 @@ fun ShoppingListScreen(
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = "Lista de Compras Inteligente",
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = PrimaryGreen
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = if (pendingCount == 0) "Tudo comprado para suas receitas!" else "$pendingCount itens pendentes para suas receitas",
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = TextSecondaryLight
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
@@ -119,7 +109,7 @@ fun ShoppingListScreen(
                             Icon(
                                 imageVector = Icons.Default.Share,
                                 contentDescription = "Compartilhar Lista",
-                                tint = PrimaryGreen
+                                tint = MaterialTheme.colorScheme.primary
                             )
                         }
                     }
@@ -134,7 +124,7 @@ fun ShoppingListScreen(
                             Icon(
                                 imageVector = Icons.Default.CleaningServices,
                                 contentDescription = "Limpar Comprados",
-                                tint = Terracotta
+                                tint = MaterialTheme.colorScheme.secondary
                             )
                         }
                     }
@@ -151,12 +141,26 @@ fun ShoppingListScreen(
                 OutlinedTextField(
                     value = newItemName,
                     onValueChange = { newItemName = it },
-                    placeholder = { Text("Adicionar item essencial faltante...", color = TextSecondaryLight) },
+                    placeholder = {
+                        Text(
+                            "Adicionar item essencial faltante...",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    },
                     modifier = Modifier
                         .weight(1f)
                         .testTag("input_shopping_name"),
-                    shape = RoundedCornerShape(12.dp),
-                    singleLine = true
+                    shape = RoundedCornerShape(14.dp),
+                    singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                        focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                        unfocusedTextColor = MaterialTheme.colorScheme.onSurface
+                    )
                 )
 
                 Spacer(modifier = Modifier.width(8.dp))
@@ -168,10 +172,10 @@ fun ShoppingListScreen(
                             newItemName = ""
                         }
                     },
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(14.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = PrimaryGreen,
-                        contentColor = Color.White
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
                     ),
                     modifier = Modifier
                         .size(52.dp)
@@ -200,14 +204,14 @@ fun ShoppingListScreen(
                 ) {
                     Surface(
                         shape = RoundedCornerShape(20.dp),
-                        color = MintContainer,
+                        color = MaterialTheme.colorScheme.primaryContainer,
                         modifier = Modifier.size(72.dp)
                     ) {
                         Box(contentAlignment = Alignment.Center) {
                             Icon(
                                 imageVector = Icons.Default.ShoppingCart,
                                 contentDescription = null,
-                                tint = PrimaryGreen,
+                                tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(36.dp)
                             )
                         }
@@ -215,25 +219,23 @@ fun ShoppingListScreen(
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = "Sua lista está limpa!",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        color = PrimaryGreen,
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
                         textAlign = TextAlign.Center
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Ao visualizar qualquer receita com ingredientes faltantes, toque em 'Adicionar faltantes à Lista de Compras' para trazê-los aqui com 1 clique.",
-                        fontSize = 14.sp,
-                        color = TextSecondaryLight,
-                        textAlign = TextAlign.Center,
-                        lineHeight = 20.sp
+                        text = "Adicione itens que faltam para suas receitas ou planeje compras conscientes para não gerar sobras esquecidas.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center
                     )
                 }
             }
         } else {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp)
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 96.dp)
             ) {
                 items(items, key = { it.id }) { item ->
                     Card(
@@ -241,58 +243,53 @@ fun ShoppingListScreen(
                             .fillMaxWidth()
                             .padding(vertical = 4.dp),
                         shape = RoundedCornerShape(14.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = if (item.isChecked) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f) else MaterialTheme.colorScheme.surface
-                        ),
-                        elevation = CardDefaults.cardElevation(defaultElevation = if (item.isChecked) 0.dp else 1.dp)
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
                     ) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 12.dp, vertical = 8.dp),
+                                .padding(horizontal = 8.dp, vertical = 6.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Checkbox(
                                 checked = item.isChecked,
                                 onCheckedChange = { onToggleItem(item) },
                                 colors = CheckboxDefaults.colors(
-                                    checkedColor = PrimaryGreen,
-                                    checkmarkColor = Color.White
+                                    checkedColor = MaterialTheme.colorScheme.primary,
+                                    checkmarkColor = MaterialTheme.colorScheme.onPrimary
                                 )
                             )
 
-                            Spacer(modifier = Modifier.width(8.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
 
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
                                     text = item.name,
-                                    fontSize = 15.sp,
+                                    style = MaterialTheme.typography.bodyLarge,
                                     fontWeight = if (item.isChecked) FontWeight.Normal else FontWeight.SemiBold,
                                     textDecoration = if (item.isChecked) TextDecoration.LineThrough else TextDecoration.None,
-                                    color = if (item.isChecked) TextSecondaryLight else PrimaryGreen
+                                    color = if (item.isChecked) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface
                                 )
 
-                                if (item.recipeOrigin.isNotBlank()) {
+                                if (item.quantity.isNotBlank() && item.quantity != "1 un") {
                                     Text(
-                                        text = "Para receita: ${item.recipeOrigin}",
-                                        fontSize = 12.sp,
-                                        fontWeight = FontWeight.Medium,
-                                        color = Terracotta
+                                        text = item.quantity,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
                             }
 
                             IconButton(
                                 onClick = { itemToDelete = item },
-                                modifier = Modifier
-                                    .size(48.dp)
-                                    .testTag("btn_delete_shopping_${item.id}")
+                                modifier = Modifier.size(48.dp)
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.DeleteOutline,
-                                    contentDescription = "Remover ${item.name}",
-                                    tint = TextSecondaryLight,
-                                    modifier = Modifier.size(20.dp)
+                                    contentDescription = "Excluir ${item.name}",
+                                    tint = MaterialTheme.colorScheme.error
                                 )
                             }
                         }
@@ -302,51 +299,22 @@ fun ShoppingListScreen(
         }
     }
 
-    // Confirmation dialog for deleting an item (Rule 5: Irreversible action confirmation)
-    itemToDelete?.let { item ->
-        AlertDialog(
-            onDismissRequest = { itemToDelete = null },
-            title = {
-                Text("Remover Item?", fontWeight = FontWeight.Bold, color = PrimaryGreen)
-            },
-            text = {
-                Text(
-                    "Deseja remover \"${item.name}\" da sua lista de compras?",
-                    color = TextPrimaryLight,
-                    fontSize = 14.sp
-                )
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        onDeleteItem(item)
-                        itemToDelete = null
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = UrgentRed)
-                ) {
-                    Text("Remover", fontWeight = FontWeight.Bold, color = Color.White)
-                }
-            },
-            dismissButton = {
-                OutlinedButton(onClick = { itemToDelete = null }) {
-                    Text("Cancelar")
-                }
-            }
-        )
-    }
-
-    // Confirmation dialog for clearing completed items (Rule 5)
+    // Confirmation dialog for clearing completed items
     if (showClearCompletedDialog) {
         AlertDialog(
             onDismissRequest = { showClearCompletedDialog = false },
             title = {
-                Text("Limpar Itens Comprados?", fontWeight = FontWeight.Bold, color = PrimaryGreen)
+                Text(
+                    text = "Limpar itens comprados?",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
             },
             text = {
                 Text(
-                    "Deseja remover todos os $completedCount itens já marcados como comprados?",
-                    color = TextPrimaryLight,
-                    fontSize = 14.sp
+                    text = "Deseja remover da lista todos os $completedCount itens já marcados como comprados?",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
             confirmButton = {
@@ -355,14 +323,68 @@ fun ShoppingListScreen(
                         onClearCompleted()
                         showClearCompletedDialog = false
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = Terracotta)
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary
+                    ),
+                    shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text("Limpar Comprados", fontWeight = FontWeight.Bold, color = Color.White)
+                    Text("Limpar Comprados", style = MaterialTheme.typography.labelLarge)
                 }
             },
             dismissButton = {
-                OutlinedButton(onClick = { showClearCompletedDialog = false }) {
-                    Text("Cancelar")
+                OutlinedButton(
+                    onClick = { showClearCompletedDialog = false },
+                    shape = RoundedCornerShape(12.dp),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                ) {
+                    Text("Cancelar", color = MaterialTheme.colorScheme.onSurface)
+                }
+            }
+        )
+    }
+
+    // Confirmation dialog for single item deletion
+    if (itemToDelete != null) {
+        val item = itemToDelete!!
+        AlertDialog(
+            onDismissRequest = { itemToDelete = null },
+            title = {
+                Text(
+                    text = "Remover da lista?",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            },
+            text = {
+                Text(
+                    text = "Deseja remover \"${item.name}\" da sua lista de compras?",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        onDeleteItem(item)
+                        itemToDelete = null
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error,
+                        contentColor = MaterialTheme.colorScheme.onError
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text("Sim, remover", style = MaterialTheme.typography.labelLarge)
+                }
+            },
+            dismissButton = {
+                OutlinedButton(
+                    onClick = { itemToDelete = null },
+                    shape = RoundedCornerShape(12.dp),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                ) {
+                    Text("Cancelar", color = MaterialTheme.colorScheme.onSurface)
                 }
             }
         )
@@ -371,17 +393,30 @@ fun ShoppingListScreen(
 
 private fun shareShoppingList(context: Context, items: List<ShoppingItem>) {
     val pending = items.filter { !it.isChecked }
-    val text = if (pending.isEmpty()) {
-        "🛒 *Lista de Compras SobraChef:*\nTodos os itens foram comprados!"
-    } else {
-        val list = pending.joinToString("\n") { "• ${it.name} (${it.quantity})" }
-        "🛒 *Lista de Compras SobraChef (Itens Faltantes):*\n\n$list\n\nEconomize e evite desperdício alimentar!"
+    val bought = items.filter { it.isChecked }
+
+    val builder = StringBuilder()
+    builder.append("🛒 *Lista de Compras - SobraChef*\n\n")
+
+    if (pending.isNotEmpty()) {
+        builder.append("📌 *A Comprar:*\n")
+        pending.forEach { builder.append("☐ ${it.name} (${it.quantity})\n") }
+        builder.append("\n")
     }
 
-    val intent = Intent().apply {
+    if (bought.isNotEmpty()) {
+        builder.append("✅ *Já Comprado:*\n")
+        bought.forEach { builder.append("☑ ${it.name}\n") }
+        builder.append("\n")
+    }
+
+    builder.append("Gerado pelo app SobraChef — Cozinha sem desperdício!")
+
+    val sendIntent = Intent().apply {
         action = Intent.ACTION_SEND
-        putExtra(Intent.EXTRA_TEXT, text)
+        putExtra(Intent.EXTRA_TEXT, builder.toString())
         type = "text/plain"
     }
-    context.startActivity(Intent.createChooser(intent, "Compartilhar Lista de Compras"))
+    val shareIntent = Intent.createChooser(sendIntent, "Compartilhar Lista de Compras")
+    context.startActivity(shareIntent)
 }

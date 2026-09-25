@@ -3,7 +3,7 @@ package com.example.ui.screens
 import android.content.Context
 import android.content.Intent
 import android.provider.CalendarContract
-import androidx.compose.foundation.background
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,6 +39,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -57,15 +58,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.model.MealPlanItem
 import com.example.data.model.MealType
-import com.example.ui.theme.MintContainer
-import com.example.ui.theme.OnMintContainer
-import com.example.ui.theme.OnTerracottaContainer
-import com.example.ui.theme.PrimaryGreen
-import com.example.ui.theme.Terracotta
-import com.example.ui.theme.TerracottaContainer
-import com.example.ui.theme.TextPrimaryLight
-import com.example.ui.theme.TextSecondaryLight
-import com.example.ui.theme.UrgentRed
 
 @Composable
 fun MealCalendarScreen(
@@ -100,38 +92,36 @@ fun MealCalendarScreen(
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = "Cardápio Semanal",
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = PrimaryGreen
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = "Planeje suas refeições e evite compras por impulso.",
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = TextSecondaryLight
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
                 Button(
                     onClick = { showAddDialog = true },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = PrimaryGreen,
-                        contentColor = Color.White
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
                     ),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(14.dp),
                     modifier = Modifier
                         .sizeIn(minHeight = 48.dp)
                         .testTag("btn_add_meal_plan")
                 ) {
                     Icon(imageVector = Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("Adicionar", fontWeight = FontWeight.Bold)
+                    Text("Adicionar", style = MaterialTheme.typography.labelLarge)
                 }
             }
         }
 
-        // Days Filter with minimum 48dp height
+        // Days Filter with minimum 44dp height
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
             contentPadding = PaddingValues(horizontal = 16.dp),
@@ -145,15 +135,21 @@ fun MealCalendarScreen(
                     label = {
                         Text(
                             text = day,
-                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
+                            style = MaterialTheme.typography.labelMedium
                         )
                     },
-                    modifier = Modifier.sizeIn(minHeight = 48.dp),
+                    modifier = Modifier.sizeIn(minHeight = 44.dp),
                     colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = MintContainer,
-                        selectedLabelColor = OnMintContainer,
-                        containerColor = Color.White,
-                        labelColor = TextPrimaryLight
+                        selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        labelColor = MaterialTheme.colorScheme.onSurface
+                    ),
+                    border = FilterChipDefaults.filterChipBorder(
+                        enabled = true,
+                        selected = isSelected,
+                        borderColor = MaterialTheme.colorScheme.outlineVariant,
+                        selectedBorderColor = MaterialTheme.colorScheme.primary
                     )
                 )
             }
@@ -174,14 +170,14 @@ fun MealCalendarScreen(
                 ) {
                     Surface(
                         shape = RoundedCornerShape(20.dp),
-                        color = MintContainer,
+                        color = MaterialTheme.colorScheme.primaryContainer,
                         modifier = Modifier.size(72.dp)
                     ) {
                         Box(contentAlignment = Alignment.Center) {
                             Icon(
                                 imageVector = Icons.Default.CalendarMonth,
                                 contentDescription = null,
-                                tint = PrimaryGreen,
+                                tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(36.dp)
                             )
                         }
@@ -189,25 +185,23 @@ fun MealCalendarScreen(
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = "Nenhuma refeição em $selectedDayFilter",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        color = PrimaryGreen,
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
                         textAlign = TextAlign.Center
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = "Abra qualquer receita para agendá-la na semana ou toque no botão 'Adicionar' acima para planejar pratos caseiros.",
-                        fontSize = 14.sp,
-                        color = TextSecondaryLight,
-                        textAlign = TextAlign.Center,
-                        lineHeight = 20.sp
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center
                     )
                 }
             }
         } else {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 96.dp)
             ) {
                 items(filteredPlans, key = { it.id }) { plan ->
                     Card(
@@ -216,7 +210,8 @@ fun MealCalendarScreen(
                             .padding(vertical = 6.dp),
                         shape = RoundedCornerShape(16.dp),
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
                     ) {
                         Row(
                             modifier = Modifier
@@ -229,26 +224,26 @@ fun MealCalendarScreen(
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Surface(
                                         shape = RoundedCornerShape(8.dp),
-                                        color = MintContainer
+                                        color = MaterialTheme.colorScheme.primaryContainer
                                     ) {
                                         Text(
                                             text = plan.dayOfWeek,
+                                            style = MaterialTheme.typography.labelSmall,
                                             fontWeight = FontWeight.Bold,
-                                            fontSize = 12.sp,
-                                            color = OnMintContainer,
+                                            color = MaterialTheme.colorScheme.onPrimaryContainer,
                                             modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
                                         )
                                     }
                                     Spacer(modifier = Modifier.width(6.dp))
                                     Surface(
                                         shape = RoundedCornerShape(8.dp),
-                                        color = TerracottaContainer
+                                        color = MaterialTheme.colorScheme.secondaryContainer
                                     ) {
                                         Text(
                                             text = plan.mealType.displayName,
+                                            style = MaterialTheme.typography.labelSmall,
                                             fontWeight = FontWeight.Bold,
-                                            fontSize = 12.sp,
-                                            color = OnTerracottaContainer,
+                                            color = MaterialTheme.colorScheme.onSecondaryContainer,
                                             modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
                                         )
                                     }
@@ -258,48 +253,40 @@ fun MealCalendarScreen(
 
                                 Text(
                                     text = plan.recipeTitle,
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = PrimaryGreen
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onSurface
                                 )
 
                                 if (plan.notes.isNotBlank()) {
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Text(
                                         text = plan.notes,
-                                        fontSize = 13.sp,
-                                        color = TextSecondaryLight
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
                             }
 
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                // Sync to device Calendar intent
+                            Row {
                                 IconButton(
-                                    onClick = { syncWithDeviceCalendar(context, plan) },
-                                    modifier = Modifier
-                                        .size(48.dp)
-                                        .testTag("btn_sync_calendar_${plan.id}")
+                                    onClick = { syncWithSystemCalendar(context, plan) },
+                                    modifier = Modifier.size(48.dp)
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.Sync,
-                                        contentDescription = "Sincronizar com Agenda do Celular",
-                                        tint = PrimaryGreen,
-                                        modifier = Modifier.size(22.dp)
+                                        contentDescription = "Sincronizar no Calendário",
+                                        tint = MaterialTheme.colorScheme.primary
                                     )
                                 }
 
                                 IconButton(
                                     onClick = { planToDelete = plan },
-                                    modifier = Modifier
-                                        .size(48.dp)
-                                        .testTag("btn_delete_calendar_${plan.id}")
+                                    modifier = Modifier.size(48.dp)
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.DeleteOutline,
-                                        contentDescription = "Excluir agendamento",
-                                        tint = TextSecondaryLight,
-                                        modifier = Modifier.size(22.dp)
+                                        contentDescription = "Excluir Planejamento",
+                                        tint = MaterialTheme.colorScheme.error
                                     )
                                 }
                             }
@@ -310,18 +297,23 @@ fun MealCalendarScreen(
         }
     }
 
-    // Confirmation dialog before deleting a meal plan (Rule 5: Irreversible action)
-    planToDelete?.let { plan ->
+    // Confirmation dialog for plan deletion
+    if (planToDelete != null) {
+        val plan = planToDelete!!
         AlertDialog(
             onDismissRequest = { planToDelete = null },
             title = {
-                Text("Remover do Cardápio?", fontWeight = FontWeight.Bold, color = PrimaryGreen)
+                Text(
+                    text = "Remover do Cardápio?",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
             },
             text = {
                 Text(
-                    "Deseja remover \"${plan.recipeTitle}\" (${plan.dayOfWeek} - ${plan.mealType.displayName}) do seu cardápio?",
-                    color = TextPrimaryLight,
-                    fontSize = 14.sp
+                    text = "Deseja remover \"${plan.recipeTitle}\" do cardápio de ${plan.dayOfWeek}?\n\nEssa refeição não constará mais no seu planejamento alimentar semanal.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
             confirmButton = {
@@ -330,14 +322,24 @@ fun MealCalendarScreen(
                         onDeleteMealPlan(plan.id)
                         planToDelete = null
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = UrgentRed)
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error,
+                        contentColor = MaterialTheme.colorScheme.onError
+                    ),
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.sizeIn(minHeight = 48.dp)
                 ) {
-                    Text("Remover", fontWeight = FontWeight.Bold, color = Color.White)
+                    Text("Sim, remover", style = MaterialTheme.typography.labelLarge)
                 }
             },
             dismissButton = {
-                OutlinedButton(onClick = { planToDelete = null }) {
-                    Text("Cancelar")
+                OutlinedButton(
+                    onClick = { planToDelete = null },
+                    shape = RoundedCornerShape(12.dp),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                    modifier = Modifier.sizeIn(minHeight = 48.dp)
+                ) {
+                    Text("Cancelar", color = MaterialTheme.colorScheme.onSurface)
                 }
             }
         )
@@ -345,14 +347,18 @@ fun MealCalendarScreen(
 
     if (showAddDialog) {
         var mealTitle by remember { mutableStateOf("") }
-        var dayChoice by remember { mutableStateOf("Hoje") }
-        var mealChoice by remember { mutableStateOf(MealType.ALMOCO) }
-        var notesInput by remember { mutableStateOf("") }
+        var selectedDay by remember { mutableStateOf("Segunda") }
+        var selectedType by remember { mutableStateOf(MealType.ALMOCO) }
+        var notes by remember { mutableStateOf("") }
 
         AlertDialog(
             onDismissRequest = { showAddDialog = false },
             title = {
-                Text("Novo Agendamento", fontWeight = FontWeight.Bold, color = PrimaryGreen)
+                Text(
+                    text = "Novo Planejamento",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
             },
             text = {
                 Column {
@@ -360,19 +366,102 @@ fun MealCalendarScreen(
                         value = mealTitle,
                         onValueChange = { mealTitle = it },
                         label = { Text("Nome da Refeição") },
-                        placeholder = { Text("Ex: Arroz de Forno com Sobras", color = TextSecondaryLight) },
+                        placeholder = { Text("Ex: Frango assado com legumes") },
+                        singleLine = true,
                         modifier = Modifier.fillMaxWidth(),
-                        singleLine = true
+                        shape = RoundedCornerShape(12.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface
+                        )
                     )
 
-                    Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Text(
+                        "Dia da Semana:",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        items(listOf("Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo")) { day ->
+                            val isSelected = selectedDay == day
+                            FilterChip(
+                                selected = isSelected,
+                                onClick = { selectedDay = day },
+                                label = { Text(day, style = MaterialTheme.typography.labelSmall) },
+                                modifier = Modifier.sizeIn(minHeight = 40.dp),
+                                colors = FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                    selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    containerColor = MaterialTheme.colorScheme.surface,
+                                    labelColor = MaterialTheme.colorScheme.onSurface
+                                ),
+                                border = FilterChipDefaults.filterChipBorder(
+                                    enabled = true,
+                                    selected = isSelected,
+                                    borderColor = MaterialTheme.colorScheme.outlineVariant,
+                                    selectedBorderColor = MaterialTheme.colorScheme.primary
+                                )
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Text(
+                        "Tipo da Refeição:",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        MealType.values().forEach { type ->
+                            val isSelected = selectedType == type
+                            FilterChip(
+                                selected = isSelected,
+                                onClick = { selectedType = type },
+                                label = { Text(type.displayName, style = MaterialTheme.typography.labelSmall) },
+                                modifier = Modifier.sizeIn(minHeight = 40.dp),
+                                colors = FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                    selectedLabelColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                                    containerColor = MaterialTheme.colorScheme.surface,
+                                    labelColor = MaterialTheme.colorScheme.onSurface
+                                ),
+                                border = FilterChipDefaults.filterChipBorder(
+                                    enabled = true,
+                                    selected = isSelected,
+                                    borderColor = MaterialTheme.colorScheme.outlineVariant,
+                                    selectedBorderColor = MaterialTheme.colorScheme.secondary
+                                )
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
 
                     OutlinedTextField(
-                        value = notesInput,
-                        onValueChange = { notesInput = it },
+                        value = notes,
+                        onValueChange = { notes = it },
                         label = { Text("Observações (opcional)") },
-                        placeholder = { Text("Ex: Tirar o frango para descongelar", color = TextSecondaryLight) },
-                        modifier = Modifier.fillMaxWidth()
+                        placeholder = { Text("Ex: Usar sobras de arroz da geladeira") },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface
+                        )
                     )
                 }
             },
@@ -380,34 +469,43 @@ fun MealCalendarScreen(
                 Button(
                     onClick = {
                         if (mealTitle.isNotBlank()) {
-                            onAddMealPlan(mealTitle.trim(), dayChoice, mealChoice, notesInput.trim())
+                            onAddMealPlan(mealTitle.trim(), selectedDay, selectedType, notes.trim())
                             showAddDialog = false
                         }
                     },
                     enabled = mealTitle.isNotBlank(),
-                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen)
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    ),
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.sizeIn(minHeight = 48.dp)
                 ) {
-                    Text("Salvar", fontWeight = FontWeight.Bold)
+                    Text("Salvar", style = MaterialTheme.typography.labelLarge)
                 }
             },
             dismissButton = {
-                OutlinedButton(onClick = { showAddDialog = false }) {
-                    Text("Cancelar")
+                OutlinedButton(
+                    onClick = { showAddDialog = false },
+                    shape = RoundedCornerShape(12.dp),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                    modifier = Modifier.sizeIn(minHeight = 48.dp)
+                ) {
+                    Text("Cancelar", color = MaterialTheme.colorScheme.onSurface)
                 }
             }
         )
     }
 }
 
-private fun syncWithDeviceCalendar(context: Context, plan: MealPlanItem) {
-    try {
-        val intent = Intent(Intent.ACTION_INSERT)
-            .setData(CalendarContract.Events.CONTENT_URI)
-            .putExtra(CalendarContract.Events.TITLE, "${plan.mealType.displayName}: ${plan.recipeTitle}")
-            .putExtra(CalendarContract.Events.DESCRIPTION, "Refeição planejada pelo SobraChef.\n${plan.notes}")
-            .putExtra(CalendarContract.Events.AVAILABILITY, CalendarContract.Events.AVAILABILITY_BUSY)
-        context.startActivity(intent)
-    } catch (e: Exception) {
-        e.printStackTrace()
+private fun syncWithSystemCalendar(context: Context, plan: MealPlanItem) {
+    val intent = Intent(Intent.ACTION_INSERT).apply {
+        data = CalendarContract.Events.CONTENT_URI
+        putExtra(CalendarContract.Events.TITLE, "${plan.mealType.displayName}: ${plan.recipeTitle}")
+        putExtra(CalendarContract.Events.DESCRIPTION, "Planejado no SobraChef: ${plan.notes}")
+        putExtra(CalendarContract.Events.EVENT_LOCATION, "Casa")
     }
+    try {
+        context.startActivity(intent)
+    } catch (_: Exception) {}
 }
