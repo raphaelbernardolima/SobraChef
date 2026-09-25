@@ -1,0 +1,6 @@
+{
+  "name": "SobraChef",
+  "description": "Transforme sobras da geladeira e dispensa em pratos incríveis, economize dinheiro e acabe com o desperdício alimentar.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
